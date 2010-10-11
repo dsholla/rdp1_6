@@ -1,0 +1,4 @@
+rdp is a system for implementing language processors. It takes as input an EBNF-like specification of a language together with a specification, written in C, of behaviour which should result when fragments of the language are recognised. rdp produces as output a program written in C, which parses fragments of the specified language and carries out the specified corresponding actions. Thus rdp can produce, for example, compilers (the actions specify the corresponding target code), interpreters (the actions evaluate the input fragments) and pretty printers (the actions reformat the input fragments).
+
+See: http://www.cs.rhul.ac.uk/research/languages/projects/rdp.html
+
