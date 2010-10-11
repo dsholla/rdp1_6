@@ -10,5 +10,6 @@
 enum opcodes{OP_HALT, OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_EXP, 
   OP_EQ, OP_NE, OP_GT, OP_GE, OP_LT, OP_LE, 
   OP_CPY, 
+  OP_RST,
   OP_BNE, OP_BEQ, 
   OP_PRTS, OP_PRTI}; 

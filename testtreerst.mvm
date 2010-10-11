@@ -1,0 +1,21 @@
+; testtreerst.mvm - generated from 'testtreerst.m'
+
+ DATA 0x8000
+__MPP_DATA:
+ CODE 0x1000
+__MPP_CODE:
+ 
+ DATA
+i: WORD 1
+
+ CODE
+ CPY  i, #1 	;i := #1 
+ RST   __temp + 2 * 0, i, #0 	;__temp + 2 * 0 := i >> #0
+ CPY  i, __temp + 2 * 0 	;i := __temp + 2 * 0 
+
+ HALT
+
+ DATA
+__temp: BLOCKW 1  ;declare array of temporaries
+
+ END __MPP_CODE

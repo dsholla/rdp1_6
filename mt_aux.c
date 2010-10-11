@@ -67,6 +67,7 @@ char * expression_walk(rdp_tree_node_data * root)
         case RDP_T_6161       /* == */ : emit("EQ ", "==", dst, left, right); break; 
         case RDP_T_62         /* > */ : emit("GT ", ">", dst, left, right); break; 
         case RDP_T_6261       /* >= */ : emit("GE ", ">=", dst, left, right); break; 
+        case RDP_T_6262       /* >> */ : emit("RST ", ">>", dst, left, right); break;
         default: text_message(TEXT_FATAL, "unexpected diadic operator found in expression walk: "
         "token number %i, identifier \'%s\'\n", root->token, root->id); 
       }

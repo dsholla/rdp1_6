@@ -206,6 +206,11 @@ static void mvmsim_execute(void)
       display("EXP ", dst, src1, src2); 
       pc += 8; 
       break; 
+      case OP_RST: 
+      put_memory_word(dst, src1 >> src2);
+      display("RST ", dst, src1, src2);
+      pc += 8;
+      break;
       case OP_EQ: 
       put_memory_word(dst, src1 == src2); 
       display("EQ  ", dst, src1, src2); 

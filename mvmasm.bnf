@@ -59,6 +59,7 @@ diadic ::= [* int op, m1 = 1, m2 = 1; *]
            'MUL' [* op = OP_MUL; *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
            'DIV' [* op = OP_DIV; *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
            'EXP' [* op = OP_EXP; *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
+           'RST' [* op = OP_RST; *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
 
            'EQ'  [* op = OP_EQ;  *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
            'NE'  [* op = OP_NE;  *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
