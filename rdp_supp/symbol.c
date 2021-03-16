@@ -529,7 +529,7 @@ void symbol_free_symbol(void * symbol)
   mem_free(sym);              /* free the memory */
 }
 
-void symbol_free_hash_chain(symbol_ *sym)
+static void symbol_free_hash_chain(symbol_ *sym)
 {
   if (sym != NULL)
   {

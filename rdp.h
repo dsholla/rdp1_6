@@ -62,45 +62,7 @@ extern locals_data * locals_temp;
 
 typedef struct codes_data_node
 {
-
-               char * id;
-               int token;
-               unsigned token_value;         /* token value for tokens */
-               unsigned extended_value;      /* extended value for tokens */
-               int kind;
-               char * return_type;           /* return_type name */
-               unsigned return_type_stars;   /* number of indirections in return type */
-               char * token_string;          /* pointer to token value as a string */
-               char * token_enum;            /* pointer to token value as enum element */
-               char * extended_enum;         /* pointer to extended value as enum element */
-               int promote_default;          /* default promotion operator */
-               int promote;                  /* promotion operator for inline calls */
-               int delimiter_promote,        /* promotion operator for iterator delimiters */
-               comment_only: 1,              /* flag to suppress unused production warning if production contains only comments */
-               contains_null: 1,             /* for quick first calculation */
-               parameterised: 1,             /* production has inherited attributes */
-               code_successor: 1,            /* mark items that follow a code item */
-               code_terminator: 1,           /* mark last code item in sequence */
-               code_only: 1,                 /* primary production with code only */
-               been_defined: 1,              /* has appeared on LHS of ::= */
-               in_use: 1,                    /* production being checked flag */
-               ll1_violation: 1,             /* ll(1) violation detected */
-               first_done: 1,                /* first() completed on this production */
-               follow_done: 1;               /* follow() completed on this production */
-               set_ first;                   /* set of first symbols */
-               unsigned call_count;          /* how many times production is called */
-               unsigned first_cardinality;   /* number of elements in first set */
-               set_ follow;                  /* set of follow symbols */
-               unsigned follow_cardinality;  /* number of elements in follow set */
-               unsigned code_pass;           /* active parser pass for code element */
-               unsigned long lo;             /* minimum iteration count */
-               unsigned long hi;             /* maximum iteration count */
-               struct rdp_param_node * params,      /* list of parameter names (and types) */
-               * actuals;                    /* list of actuals filled in by item_ret */
-               struct rdp_list_node * list;  /* list of alternatives or items */
-               struct rdp_data_node * supplementary_token;  /* spare token pointer */
-               char * close;                 /* extended keyword close string */
-             
+  RDP_DATA
 } codes_data;
 extern void * codes;
 extern codes_data * codes_temp;
@@ -108,45 +70,7 @@ extern codes_data * codes_temp;
 
 typedef struct tokens_data_node
 {
-
-               char * id;
-               int token;
-               unsigned token_value;         /* token value for tokens */
-               unsigned extended_value;      /* extended value for tokens */
-               int kind;
-               char * return_type;           /* return_type name */
-               unsigned return_type_stars;   /* number of indirections in return type */
-               char * token_string;          /* pointer to token value as a string */
-               char * token_enum;            /* pointer to token value as enum element */
-               char * extended_enum;         /* pointer to extended value as enum element */
-               int promote_default;          /* default promotion operator */
-               int promote;                  /* promotion operator for inline calls */
-               int delimiter_promote,        /* promotion operator for iterator delimiters */
-               comment_only: 1,              /* flag to suppress unused production warning if production contains only comments */
-               contains_null: 1,             /* for quick first calculation */
-               parameterised: 1,             /* production has inherited attributes */
-               code_successor: 1,            /* mark items that follow a code item */
-               code_terminator: 1,           /* mark last code item in sequence */
-               code_only: 1,                 /* primary production with code only */
-               been_defined: 1,              /* has appeared on LHS of ::= */
-               in_use: 1,                    /* production being checked flag */
-               ll1_violation: 1,             /* ll(1) violation detected */
-               first_done: 1,                /* first() completed on this production */
-               follow_done: 1;               /* follow() completed on this production */
-               set_ first;                   /* set of first symbols */
-               unsigned call_count;          /* how many times production is called */
-               unsigned first_cardinality;   /* number of elements in first set */
-               set_ follow;                  /* set of follow symbols */
-               unsigned follow_cardinality;  /* number of elements in follow set */
-               unsigned code_pass;           /* active parser pass for code element */
-               unsigned long lo;             /* minimum iteration count */
-               unsigned long hi;             /* maximum iteration count */
-               struct rdp_param_node * params,      /* list of parameter names (and types) */
-               * actuals;                    /* list of actuals filled in by item_ret */
-               struct rdp_list_node * list;  /* list of alternatives or items */
-               struct rdp_data_node * supplementary_token;  /* spare token pointer */
-               char * close;                 /* extended keyword close string */
-             
+  RDP_DATA
 } tokens_data;
 extern void * tokens;
 extern tokens_data * tokens_temp;
@@ -154,45 +78,7 @@ extern tokens_data * tokens_temp;
 
 typedef struct rdp_data_node
 {
-
-               char * id;
-               int token;
-               unsigned token_value;         /* token value for tokens */
-               unsigned extended_value;      /* extended value for tokens */
-               int kind;
-               char * return_type;           /* return_type name */
-               unsigned return_type_stars;   /* number of indirections in return type */
-               char * token_string;          /* pointer to token value as a string */
-               char * token_enum;            /* pointer to token value as enum element */
-               char * extended_enum;         /* pointer to extended value as enum element */
-               int promote_default;          /* default promotion operator */
-               int promote;                  /* promotion operator for inline calls */
-               int delimiter_promote,        /* promotion operator for iterator delimiters */
-               comment_only: 1,              /* flag to suppress unused production warning if production contains only comments */
-               contains_null: 1,             /* for quick first calculation */
-               parameterised: 1,             /* production has inherited attributes */
-               code_successor: 1,            /* mark items that follow a code item */
-               code_terminator: 1,           /* mark last code item in sequence */
-               code_only: 1,                 /* primary production with code only */
-               been_defined: 1,              /* has appeared on LHS of ::= */
-               in_use: 1,                    /* production being checked flag */
-               ll1_violation: 1,             /* ll(1) violation detected */
-               first_done: 1,                /* first() completed on this production */
-               follow_done: 1;               /* follow() completed on this production */
-               set_ first;                   /* set of first symbols */
-               unsigned call_count;          /* how many times production is called */
-               unsigned first_cardinality;   /* number of elements in first set */
-               set_ follow;                  /* set of follow symbols */
-               unsigned follow_cardinality;  /* number of elements in follow set */
-               unsigned code_pass;           /* active parser pass for code element */
-               unsigned long lo;             /* minimum iteration count */
-               unsigned long hi;             /* maximum iteration count */
-               struct rdp_param_node * params,      /* list of parameter names (and types) */
-               * actuals;                    /* list of actuals filled in by item_ret */
-               struct rdp_list_node * list;  /* list of alternatives or items */
-               struct rdp_data_node * supplementary_token;  /* spare token pointer */
-               char * close;                 /* extended keyword close string */
-             
+  RDP_DATA
 } rdp_data;
 extern void * rdp;
 extern rdp_data * rdp_temp;

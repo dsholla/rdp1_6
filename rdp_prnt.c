@@ -1033,7 +1033,7 @@ void rdp_print_parser(char * outputfilename, void * base)
   "  rdp_sourcefilenumber,                /* Source file counter */\n"
   "  rdp_pass;                            /* pass number */\n\n"
   "int rdp_error_return = 0;              /* return value for main routine */\n\n"
-  "char *rdp_tokens = ", rdp_dir_output_file);
+  "const char *rdp_tokens = ", rdp_dir_output_file);
 
   str = rdp_token_string; 
   for (token_count = 0; token_count < rdp_token_count; token_count++)
@@ -1060,7 +1060,7 @@ void rdp_print_parser(char * outputfilename, void * base)
     text_printf("\n/* Tree update function for noterminal nodes */\n"
                 "static int rdp_tree_update = 0;\n\n"
                 "rdp_tree_node_data* rdp_tree_last_child;\n\n"
-                "rdp_tree_node_data* rdp_add_node(char* id, rdp_tree_node_data* rdp_tree)\n"
+                "static rdp_tree_node_data* rdp_add_node(char* id, rdp_tree_node_data* rdp_tree)\n"
                 "{\n"
                 "  if (rdp_tree_update)\n"
                 "  {\n"
@@ -1069,12 +1069,12 @@ void rdp_print_parser(char * outputfilename, void * base)
                 "       node->id = id;\n"
                 "     else\n"
                 "       memcpy(node, text_scan_data, sizeof(scan_data));\n"
-                "       return node;\n"
+                "     return node;\n"
                 "  }\n"
                 "  else\n"
                 "    return NULL;\n"
                 "}\n\n"
-                "rdp_tree_node_data* rdp_add_child(char* id, rdp_tree_node_data* rdp_tree)\n"
+                "static rdp_tree_node_data* rdp_add_child(char* id, rdp_tree_node_data* rdp_tree)\n"
                 "{\n"
                 "  if (rdp_tree_update)\n"
                 "  {\n"
@@ -1090,7 +1090,7 @@ void rdp_print_parser(char * outputfilename, void * base)
                 "    return NULL;\n"
                 "}\n\n"
 
-                "rdp_tree_node_data* rdp_add_parent(char* id, rdp_tree_node_data* rdp_tree)\n"
+                "static rdp_tree_node_data* rdp_add_parent(char* id, rdp_tree_node_data* rdp_tree)\n"
                 "{\n"
                 "  if (rdp_tree_update)\n"
                 "  {\n"

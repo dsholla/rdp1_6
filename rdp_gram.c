@@ -274,12 +274,14 @@ static int rdp_check_empties(void * base)
       while (list != NULL)
       {
         if (list->production->kind == K_CODE) /* check code position */
+        {
           if (list->next == NULL) /* last in list? */
-          list->production->code_terminator = 1; 
-        else if (list->next->production->kind == K_CODE) /* is the next one code? */
-          list->next->production->code_successor = 1;  /* next one is code successor */
-        else
-          list->production->code_terminator = 1;  /* this one is code terminator */
+            list->production->code_terminator = 1; 
+          else if (list->next->production->kind == K_CODE) /* is the next one code? */
+            list->next->production->code_successor = 1;  /* next one is code successor */
+          else
+            list->production->code_terminator = 1;  /* this one is code terminator */
+        }
         
         if (list->production->kind != K_CODE)
           bad_alternate = 0; 
