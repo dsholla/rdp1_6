@@ -263,16 +263,10 @@ static char * text_ASCII_table =
 
 char * text_find_ASCII_element(int c)
 {
-  char * temp = text_ASCII_table; 
-
   if (c > 127)
-    return"???"; 
+    return"???";
   else
-    while (c-- > 0)
-    while (* temp++ != 0)
-    ; 
-  
-  return temp;
+    return text_ASCII_table[c];
 }
 
 /* Release all memory held by the text package */
@@ -398,7 +392,7 @@ void text_init(const long max_text, const unsigned max_errors, const unsigned ma
     text_message(TEXT_WARNING, "-T%lu too large for architecture: recast to -T%u\n", max_text, maxtext); 
   maxerrors = max_errors;     /* set maximum number of errors per file */
   maxwarnings = max_warnings;  /* set maximum number of warnings per file */
-  
+
   text_bot =(char *) mem_malloc(maxtext);  /* allocate text buffer */
   
   text_top = text_bot;        /* top of text character */
@@ -660,6 +654,22 @@ int text_printf(const char * fmt, ...)
   va_end(ap);                 /* end of var args block */
   
   return i;                   /* return number of characters printed */
+}
+
+int text_print_as_C_identifier(char * str)
+{
+  int i = 0;
+
+  if (str == NULL)
+  {
+    fprintf(MESSAGES_FILE, "(null)");
+    return 6;
+  }
+
+  while (* str != 0)
+    text_printf("%s", text_find_ASCII_element(* str++));
+
+  return i;
 }
 
 int text_print_as_C_string_or_char(FILE * file, char * string, int is_char_string)

@@ -245,6 +245,9 @@ void set_difference_set(const set_ * dst, const set_ * src)
 /* free storage associated with a set's elements and return set to SET_NULL */
 void set_free(set_ * dst)
 {
+  if (dst == NULL)
+    return;
+    
   if (dst->elements != NULL)
     mem_free(dst->elements); 
   dst->length = 0; 
@@ -395,6 +398,9 @@ void set_normalise(set_ * dst)
 
 unsigned set_normalised_length(const set_ * dst)
 {
+   if (dst->length == 0)
+     return 0;
+     
    unsigned normalized_size = dst->length - 1;
 
    while (dst->elements[normalized_size] == 0 && normalized_size > 0)
@@ -426,6 +432,12 @@ void set_print_element(const unsigned element, const char * element_names)
 
 void set_print_set(const set_ * src, const char * element_names, unsigned line_length)
 {
+  if (src == NULL)
+  {
+    text_printf("!NULL!");
+    return;
+  }
+
   unsigned
   column = 0,
   last_printed = 0,
