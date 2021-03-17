@@ -553,7 +553,7 @@ static void dir(rdp_tree_node_data* rdp_tree)
               var = code(rdp_add_child("code", rdp_tree));
             }
             else
-              scan_test_set(NULL, &rdp_dir_3_first, &dir_stop)            ;
+              scan_test_set(NULL, &rdp_dir_3_first, &dir_stop);
             }
           break;   /* hi limit is 1! */
         }
@@ -597,7 +597,7 @@ static void dir(rdp_tree_node_data* rdp_tree)
               var = code(rdp_add_child("code", rdp_tree));
             }
             else
-              scan_test_set(NULL, &rdp_dir_7_first, &dir_stop)            ;
+              scan_test_set(NULL, &rdp_dir_7_first, &dir_stop);
             }
           break;   /* hi limit is 1! */
         }
@@ -641,7 +641,7 @@ static void dir(rdp_tree_node_data* rdp_tree)
               var = code(rdp_add_child("code", rdp_tree));
             }
             else
-              scan_test_set(NULL, &rdp_dir_11_first, &dir_stop)            ;
+              scan_test_set(NULL, &rdp_dir_11_first, &dir_stop);
             }
           break;   /* hi limit is 1! */
         }
@@ -1000,7 +1000,7 @@ temp = (rdp_string_list*) mem_malloc(sizeof(rdp_string_list)); \
               scan_();
             }
             else
-              scan_test_set(NULL, &rdp_dir_34_first, &dir_stop)            ;
+              scan_test_set(NULL, &rdp_dir_34_first, &dir_stop);
             }
           break;   /* hi limit is 1! */
         }
@@ -1186,7 +1186,7 @@ temp = (rdp_string_list*) mem_malloc(sizeof(rdp_string_list)); \
       scan_();
     }
     else
-      scan_test_set(NULL, &dir_first, &dir_stop)    ;
+      scan_test_set(NULL, &dir_first, &dir_stop);
     scan_test_set(NULL, &dir_stop, &dir_stop);
    }
 }
@@ -1250,7 +1250,7 @@ static rdp_data* item_com(rdp_tree_node_data* rdp_tree)
 }
     }
     else
-      scan_test_set(NULL, &item_com_first, &item_com_stop)    ;
+      scan_test_set(NULL, &item_com_first, &item_com_stop);
     scan_test_set(NULL, &item_com_stop, &item_com_stop);
    }
   return result;
@@ -1362,7 +1362,7 @@ static rdp_data* item_inl(rdp_tree_node_data* rdp_tree)
                           scan_();
                         }
                         else
-                          scan_test_set(NULL, &rdp_item_inl_7_first, &item_inl_stop)                        ;
+                          scan_test_set(NULL, &rdp_item_inl_7_first, &item_inl_stop);
                         }
                       break;   /* hi limit is 1! */
                     }
@@ -1460,7 +1460,7 @@ static rdp_data* item_inl(rdp_tree_node_data* rdp_tree)
                           scan_();
                         }
                         else
-                          scan_test_set(NULL, &rdp_item_inl_16_first, &item_inl_stop)                        ;
+                          scan_test_set(NULL, &rdp_item_inl_16_first, &item_inl_stop);
                         }
                       break;   /* hi limit is 1! */
                     }
@@ -1510,7 +1510,7 @@ if (rdp_pass == 2) { \
 }
                         }
                         else
-                          scan_test_set(NULL, &rdp_item_inl_21_first, &item_inl_stop)                        ;
+                          scan_test_set(NULL, &rdp_item_inl_21_first, &item_inl_stop);
                         }
                       break;   /* hi limit is 1! */
                     }
@@ -1591,7 +1591,7 @@ if (rdp_pass == 2) { \
 }
           }
           else
-            scan_test_set(NULL, &rdp_item_inl_28_first, &item_inl_stop)          ;
+            scan_test_set(NULL, &rdp_item_inl_28_first, &item_inl_stop);
           }
         break;   /* hi limit is 1! */
       }
@@ -1699,7 +1699,7 @@ static rdp_data* item_ret(rdp_tree_node_data* rdp_tree)
 }
                   }
                   else
-                    scan_test_set(NULL, &rdp_item_ret_4_first, &item_ret_stop)                  ;
+                    scan_test_set(NULL, &rdp_item_ret_4_first, &item_ret_stop);
                   }
                 break;   /* hi limit is 1! */
               }
@@ -1902,7 +1902,7 @@ static rdp_data* item_ret(rdp_tree_node_data* rdp_tree)
 }
     }
     else
-      scan_test_set(NULL, &item_ret_first, &item_ret_stop)    ;
+      scan_test_set(NULL, &item_ret_first, &item_ret_stop);
     scan_test_set(NULL, &item_ret_stop, &item_ret_stop);
    }
   return result;
@@ -2141,7 +2141,7 @@ static rdp_data* rule(rdp_tree_node_data* rdp_tree)
 }
           }
           else
-            scan_test_set(NULL, &rdp_rule_16_first, &rule_stop)          ;
+            scan_test_set(NULL, &rdp_rule_16_first, &rule_stop);
           }
         break;   /* hi limit is 1! */
       }
@@ -2214,7 +2214,7 @@ static rdp_list* seq(rdp_tree_node_data* rdp_tree)
                           body = item_com(rdp_add_child("item_com", rdp_tree));
                         }
                         else
-                          scan_test_set(NULL, &rdp_seq_2_first, &seq_stop)                        ;
+                          scan_test_set(NULL, &rdp_seq_2_first, &seq_stop);
                         }
                       break;   /* hi limit is 1! */
                     }
@@ -2285,7 +2285,7 @@ static rdp_list* seq(rdp_tree_node_data* rdp_tree)
 }
                         }
                         else
-                          scan_test_set(NULL, &rdp_seq_9_first, &seq_stop)                        ;
+                          scan_test_set(NULL, &rdp_seq_9_first, &seq_stop);
                         }
                       break;   /* hi limit is 1! */
                     }
@@ -2385,7 +2385,7 @@ if (rdp_pass == 2) { \
 }
                                       }
                                       else
-                                        scan_test_set(NULL, &rdp_seq_17_first, &seq_stop)                                      ;
+                                        scan_test_set(NULL, &rdp_seq_17_first, &seq_stop);
                                       }
                                     break;   /* hi limit is 1! */
                                   }
@@ -2444,14 +2444,14 @@ if (rdp_pass == 2) { \
 }
                                       }
                                       else
-                                        scan_test_set(NULL, &rdp_seq_23_first, &seq_stop)                                      ;
+                                        scan_test_set(NULL, &rdp_seq_23_first, &seq_stop);
                                       }
                                     break;   /* hi limit is 1! */
                                   }
                                 } /* end of rdp_seq_23 */
                               }
                               else
-                                scan_test_set(NULL, &rdp_seq_25_first, &seq_stop)                              ;
+                                scan_test_set(NULL, &rdp_seq_25_first, &seq_stop);
                               }
                             break;   /* hi limit is 1! */
                           }
@@ -2472,7 +2472,7 @@ if (rdp_pass == 2) { \
                   }
                 }
                 else
-                  scan_test_set(NULL, &rdp_seq_29_first, &seq_stop)                ;
+                  scan_test_set(NULL, &rdp_seq_29_first, &seq_stop);
                 }
               break;   /* hi limit is 1! */
             }
@@ -2531,7 +2531,7 @@ void unit(rdp_tree_node_data* rdp_tree)
             dir(rdp_add_child("dir", rdp_tree));
           }
           else
-            scan_test_set(NULL, &rdp_unit_2_first, &unit_stop)          ;
+            scan_test_set(NULL, &rdp_unit_2_first, &unit_stop);
           }
         if (!scan_test_set(NULL, &rdp_unit_2_first, NULL)) break;
       }
