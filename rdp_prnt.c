@@ -902,7 +902,7 @@ static void rdp_print_locals(void * base)
       text_printf("  %s", list->production->return_type); 
       for (temp_int = 0; temp_int < list->production->return_type_stars; temp_int++)
         text_printf("*");
-      text_printf(" %s;\n", list->return_name); 
+      text_printf(" %s = 0;\n", list->return_name); 
     }
     
     list = list->next; 
@@ -946,7 +946,7 @@ static void rdp_print_parser_primaries(void * base)
         text_printf("  %s", temp->return_type);
         for (temp_int = 0; temp_int < temp->return_type_stars; temp_int++)
           text_printf("*");
-        text_printf(" result;\n");
+        text_printf(" result = 0;\n");
       }
       
       if (!rdp_parser_only)   /* disabled by -p option */
