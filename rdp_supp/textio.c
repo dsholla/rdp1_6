@@ -249,7 +249,7 @@ char * text_extract_filename(char * fname)
 }
 
 /* Table of string equivalents for ASCII codes */
-static char * text_ASCII_table =
+static char * text_ASCII_table[] = {
 "NUL" "SOH" "STX" "ETX" "EOT" "ENQ" "ACK" "BEL" "BS" "HT" "LF" "VT" "FF"
 "CR" "SO" "SI" "DLE" "DC1" "DC2" "DC3" "DC4" "NAK" "SYN" "ETB" "CAN"
 "EM" "SUB" "ESC" "FS" "GS" "RS" "US" "SPACE" "SHREIK" "DBLQUOTE" "HASH"
@@ -259,12 +259,12 @@ static char * text_ASCII_table =
 "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W"
 "X" "Y" "Z" "LBRACK" "BACKSLASH" "RBRACK" "UPARROW" "_" "`" "a" "b" "c"
 "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u"
-"v" "w" "x" "y" "z" "LBRACE" "BAR" "RBRACE" "TILDE" "DEL"; 
+"v" "w" "x" "y" "z" "LBRACE" "BAR" "RBRACE" "TILDE" "DEL" }; 
 
 char * text_find_ASCII_element(int c)
 {
   if (c > 127)
-    return"???";
+    return "???";
   else
     return text_ASCII_table[c];
 }
