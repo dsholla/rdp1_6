@@ -774,12 +774,12 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
       char * temp = prod->id; 
       
       if (prod->code_pass != 0)
-        text_printf("if (rdp_pass == %u) { \\\n", prod->code_pass);
+        text_printf("if (rdp_pass == %u) {\n", prod->code_pass);
 
       while (* temp != '\0')
       {
         if (* temp == '\n')
-          text_printf("\\\n"); 
+          text_printf(prod->first_done ? "\\\n" : "\n");
         else
           if (isprint(*temp))
             text_printf("%c", * temp);
@@ -787,9 +787,9 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
       }
       
       if (prod->code_pass != 0)
-        text_printf(" \\\n}"); 
+        text_printf(" \n}");
       
-      if (prod->kind == K_CODE && prod->code_terminator)
+      if (prod->code_terminator)
         text_printf("\n");    /* terminate semantic actions tidily */
     }
     break; 
@@ -868,9 +868,8 @@ static void rdp_print_parser_alternate(rdp_data * production, rdp_data * primary
         rdp_indentation++; 
         rdp_indent(); 
         rdp_print_parser_test(production->id, & production->first, primary->id); 
-        rdp_indentation--; 
-        rdp_indent();
-        text_printf(";\n"); 
+        text_printf(";\n");
+        rdp_indentation--;
       }
     }
   }
