@@ -45,7 +45,7 @@ static int get_memory_byte(unsigned long address)
   val = memory[address]; 
   
   if (val & 0x40)             /* negative? */
-    val =(- 1l << 8)| val; 
+    val =(- (1l << 8))| val; 
   
   return val; 
 }
@@ -58,7 +58,7 @@ static int get_memory_word(unsigned long address)
   val =((int) memory[address]<< 8)|((int) memory[address + 1]); 
   
   if (val & 0x4000)           /* negative? */
-    val =(- 1l << 16)| val; 
+    val =(- (1l << 16))| val; 
   
   return val; 
 }
