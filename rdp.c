@@ -49,7 +49,7 @@ static int rdp_tree_update = 0;
 
 rdp_tree_node_data* rdp_tree_last_child;
 
-rdp_tree_node_data* rdp_add_node(char* id, rdp_tree_node_data* rdp_tree)
+static rdp_tree_node_data* rdp_add_node(char* id, rdp_tree_node_data* rdp_tree)
 {
   if (rdp_tree_update)
   {
@@ -58,13 +58,13 @@ rdp_tree_node_data* rdp_add_node(char* id, rdp_tree_node_data* rdp_tree)
        node->id = id;
      else
        memcpy(node, text_scan_data, sizeof(scan_data));
-       return node;
+     return node;
   }
   else
     return NULL;
 }
 
-rdp_tree_node_data* rdp_add_child(char* id, rdp_tree_node_data* rdp_tree)
+static rdp_tree_node_data* rdp_add_child(char* id, rdp_tree_node_data* rdp_tree)
 {
   if (rdp_tree_update)
   {
@@ -81,7 +81,7 @@ rdp_tree_node_data* rdp_add_child(char* id, rdp_tree_node_data* rdp_tree)
     return NULL;
 }
 
-rdp_tree_node_data* rdp_add_parent(char* id, rdp_tree_node_data* rdp_tree)
+static rdp_tree_node_data* rdp_add_parent(char* id, rdp_tree_node_data* rdp_tree)
 {
   if (rdp_tree_update)
   {
@@ -1193,7 +1193,7 @@ temp = (rdp_string_list*) mem_malloc(sizeof(rdp_string_list)); \
 
 static rdp_data* item_com(rdp_tree_node_data* rdp_tree)
 {
-  rdp_data* result;
+  rdp_data* result = NULL;
   char* name;
   char* close;
   {
@@ -1258,7 +1258,7 @@ static rdp_data* item_com(rdp_tree_node_data* rdp_tree)
 
 static rdp_data* item_inl(rdp_tree_node_data* rdp_tree)
 {
-  rdp_data* result;
+  rdp_data* result = NULL;
   char* name;
   long int pass;
   rdp_list* body;
@@ -1603,7 +1603,7 @@ if (rdp_pass == 2) { \
 
 static rdp_data* item_ret(rdp_tree_node_data* rdp_tree)
 {
-  rdp_data* result;
+  rdp_data* result = NULL;
   char* name;
   long int n;
   double r;
@@ -1946,7 +1946,7 @@ if (rdp_tree_update) rdp_add_child(NULL, rdp_tree);
 
 static rdp_data* rule(rdp_tree_node_data* rdp_tree)
 {
-  rdp_data* result;
+  rdp_data* result = NULL;
   char* name;
   char* type;
   rdp_list* body;
