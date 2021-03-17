@@ -437,6 +437,7 @@ static void rdp_print_sub_alternate(rdp_data * production, int expand)
 void rdp_print_header(char * headerfilename)
 {
   FILE * headerfile;
+  int toke_len_sum;
 
   rdp_table_list * temp_table = rdp_dir_symbol_table;
   rdp_data * temp =(rdp_data *) symbol_next_symbol_in_scope(symbol_get_scope(tokens));
@@ -486,14 +487,19 @@ void rdp_print_header(char * headerfilename)
   text_printf(" and compiled on \" __DATE__ \" at \" __TIME__ \n");
 
   /* print token enumeration */
-  text_printf("\n/* Token enumeration */\nenum\n{\nRDP_TT_BOTTOM = SCAN_P_TOP"); 
+  text_printf("\n/* Token enumeration */\nenum\n{\n  RDP_TT_BOTTOM = SCAN_P_TOP");
+  toke_len_sum = 20;
   while (temp != NULL)
   {
     if (temp->kind == K_TOKEN || temp->kind == K_EXTENDED)
     {
-      text_printf(","); 
-      if (count++ % 8 == 0)
-        text_printf("\n");
+      text_printf(",");
+      toke_len_sum += strlen(temp->token_enum)+2;
+      if (toke_len_sum > 50)
+      {
+        text_printf("\n  ");
+        toke_len_sum = 0;
+      }
       rdp_print_parser_production_name(temp); 
       if (first)
       {
@@ -503,7 +509,7 @@ void rdp_print_header(char * headerfilename)
     }
     temp =(rdp_data *) symbol_next_symbol_in_scope(temp);
   }
-  text_printf(",\nRDP_TT_TOP\n};\n\n");
+  text_printf(",\n  RDP_TT_TOP\n};\n\n");
 
   /* print declaration for tree datatype */
   text_printf("/* Tree data types */\n\n"
@@ -1171,14 +1177,14 @@ void rdp_print_parser(char * outputfilename, void * base)
       if (temp->first_cardinality > 1)
       {
         text_printf("  set_assign_list(&%s_first, ", temp->id); 
-        set_print_set(& temp->first, rdp_enum_string, 78); 
+        set_print_set_start_col(& temp->first, rdp_enum_string, 60, 30); 
         text_printf(", SET_END);\n"); 
       }
       
       if (temp->kind == K_PRIMARY)
       {
         text_printf("  set_assign_list(&%s_stop, ", temp->id);
-        set_print_set(& temp->follow, rdp_enum_string, 78); 
+        set_print_set_start_col(& temp->follow, rdp_enum_string, 60, 30); 
         text_printf(",SET_END);\n"); 
       }
     }
