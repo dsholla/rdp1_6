@@ -997,7 +997,7 @@ void rdp_print_parser(char * outputfilename, void * base)
   rdp_data * temp; 
   rdp_table_list * temp_table; 
   FILE * parserfile;
-  unsigned token_count;
+  unsigned token_count, token_len_sum;
   char * str; 
 
   if (rdp_verbose)
@@ -1041,12 +1041,17 @@ void rdp_print_parser(char * outputfilename, void * base)
   "int rdp_error_return = 0;              /* return value for main routine */\n\n"
   "const char *rdp_tokens = ", rdp_dir_output_file);
 
-  str = rdp_token_string; 
+  str = rdp_token_string;
+  token_len_sum = 0;
   for (token_count = 0; token_count < rdp_token_count; token_count++)
   {
+    token_len_sum += strlen(str) + 5;
     text_printf("\"%s\\0\" ", str); 
-    if (token_count % 8 == 0)
-      text_printf("\n"); 
+    if (token_count == 0 || token_len_sum > 60)
+    {
+      text_printf("\n  ");
+      token_len_sum = 0;
+    }
     while (* str++ != 0)
       ;
   }
