@@ -398,10 +398,11 @@ void set_normalise(set_ * dst)
 
 unsigned set_normalised_length(const set_ * dst)
 {
+   unsigned normalized_size;
    if (dst->length == 0)
      return 0;
      
-   unsigned normalized_size = dst->length - 1;
+   normalized_size = dst->length - 1;
 
    while (dst->elements[normalized_size] == 0 && normalized_size > 0)
      normalized_size--;
