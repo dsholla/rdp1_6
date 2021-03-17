@@ -456,8 +456,8 @@ void set_print_set(const set_ * src, const char * element_names, unsigned line_l
 
     if (line_length != 0 && column >= line_length) /* we are past margin */
     {
-      text_printf("\n");
-      column = 0;
+      text_printf("\n    ");
+      column = 4; /* indent the start of new line */
     }
 
     if (element_names == NULL) /* just print decimal set element numbers */
