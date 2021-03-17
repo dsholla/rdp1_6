@@ -190,8 +190,11 @@ void rdp_pre_parse(void)
   rdp_add_arg(ARG_BOOLEAN, "S", "rdp_symbol_statistics", "Print summary symbol table statistics"); 
   rdp_add_arg(ARG_NUMERIC, "t", "rdp_tabwidth", "Tab expansion width (default 8)"); 
   rdp_add_arg(ARG_NUMERIC, "T", "rdp_textsize", "Text buffer size in bytes for scanner (default 20000)"); 
-  rdp_add_arg(ARG_BOOLEAN, "v", "rdp_verbose", "Set verbose mode"); 
-  rdp_add_arg(ARG_STRING, "V", "rdp_vcg_filename", "Write derivation tree to filename in VCG format"); 
+  rdp_add_arg(ARG_BOOLEAN, "v", "rdp_verbose", "Set verbose mode");
+  if (rdp_dir_tree)
+  {
+      rdp_add_arg(ARG_STRING, "V", "rdp_vcg_filename", "Write derivation tree to filename in VCG format"); 
+  }
   
   rdp_find("ID", K_STRING, RDP_ANY)->token_value = SCAN_P_ID;  /* add predefined primitive productions */
   rdp_find("INTEGER", K_INTEGER, RDP_ANY)->token_value = SCAN_P_INTEGER; 

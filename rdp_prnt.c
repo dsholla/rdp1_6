@@ -1232,7 +1232,8 @@ void rdp_print_parser(char * outputfilename, void * base)
   "  unsigned long rdp_tabwidth = %lul;   /* tab expansion width */\n\n",
   rdp_dir_text_size, rdp_dir_tab_width);
 
-  text_printf("  char* rdp_vcg_filename = NULL;      /* filename for -V option */\n\n");
+  if (rdp_dir_tree)
+    text_printf("  char* rdp_vcg_filename = NULL;      /* filename for -V option */\n\n");
 
   if (rdp_dir_tree)
     text_printf("  rdp_tree_node_data* rdp_tree = (rdp_tree_node_data*) graph_insert_graph(\"RDP derivation tree\");  /* hook for derivation tree */\n"
