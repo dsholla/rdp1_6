@@ -52,7 +52,7 @@ label ::= ID:lab
 
 instr   ::= diadic | copy | branch | print | halt | directive.
 
-diadic ::= [* int op, m1 = 1, m2 = 1; *]
+diadic ::= [* int op = 0, m1 = 1, m2 = 1; *]
            (
            'ADD' [* op = OP_ADD; *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
            'SUB' [* op = OP_SUB; *] e1: dst ',' ['#' [* m1=0; *] ] e1: src1 ',' ['#' [* m2=0; *] ] e1:src2 |
