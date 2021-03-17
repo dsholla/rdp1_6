@@ -1340,7 +1340,7 @@ void rdp_print_parser(char * outputfilename, void * base)
   text_printf(
   ";            /* call parser at top level */\n"
   "      if (text_total_errors() != 0)\n"
-  "        text_message(TEXT_FATAL, \"error%%s detected in source file '%s'\\n\", text_total_errors() == 1 ? \"\" : \"s\", rdp_sourcefilename);   /* crash quietly */ \n");
+  "        text_message(TEXT_FATAL, \"error%%s detected in source file '%%s'\\n\", text_total_errors() == 1 ? \"\" : \"s\", rdp_sourcefilename);   /* crash quietly */ \n");
 
   if (rdp_dir_tree && !rdp_dir_epsilon_tree)
     text_printf("      graph_epsilon_prune_rdp_tree(rdp_tree_root, sizeof(rdp_tree_edge_data));\n");
