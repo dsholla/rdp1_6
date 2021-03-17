@@ -774,7 +774,10 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
       char * temp = prod->id; 
       
       if (prod->code_pass != 0)
+      {
         text_printf("if (rdp_pass == %u) {\n", prod->code_pass);
+        rdp_indent();
+      }
 
       while (* temp != '\0')
       {
@@ -787,7 +790,11 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
       }
       
       if (prod->code_pass != 0)
-        text_printf(" \n}");
+      {
+        text_printf("\n");
+        rdp_indent();
+        text_printf("}");
+      }
       
       if (prod->code_terminator)
         text_printf("\n");    /* terminate semantic actions tidily */
