@@ -26,6 +26,8 @@ char * rdp_token_string = NULL;
 char * rdp_enum_string = NULL;
 
 static unsigned rdp_indentation = 0;  /* current identation level */
+#define rdp_indentation_up() ++rdp_indentation
+#define rdp_indentation_down() if(rdp_indentation > 0) --rdp_indentation
 
 static void rdp_print_parser_include_line(rdp_string_list * p)
 {
@@ -569,7 +571,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("/* WARNING - an LL(1) violation was detected at this point in the grammar */\n");
   }
 
-  rdp_indentation++;
+  rdp_indentation_up();
   
   /* We don't need to instantiate count if hi is infinity and lo is 0 or 1 */
   if (!((prod->hi == 0 || prod->hi == 1)&&(prod->lo == 1 || prod->lo == 0)))
@@ -583,7 +585,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
 
   rdp_indent();
   text_printf("{\n"); 
-  rdp_indentation++; 
+  rdp_indentation_up(); 
   
   /* Put in test that first element of body matches if iterator low count > 0 and prod isn't nullable */
   if (prod->lo != 0 && !prod->contains_null)
@@ -595,13 +597,13 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
   
   rdp_indent(); 
   text_printf("{\n");
-  rdp_indentation++;
+  rdp_indentation_up();
 
   rdp_print_parser_alternate(prod, primary);
   
+  rdp_indentation_down();
   rdp_indent(); 
   text_printf("}\n");
-  rdp_indentation--;
   
   if (!((prod->hi == 0 || prod->hi == 1)&&(prod->lo == 1 || prod->lo == 0)))
   {
@@ -653,7 +655,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("break;   /* hi limit is 1! */\n"); 
   }
 
-  rdp_indentation--;
+  rdp_indentation_down();
   rdp_indent(); 
   text_printf("}\n");
   
@@ -664,7 +666,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("  text_message(TEXT_ERROR_ECHO, \"iteration count too low\\n\");\n"); 
   }
   
-  rdp_indentation--; 
+  rdp_indentation_down(); 
   rdp_indent();
   text_printf("} /* end of %s */\n", prod->id);
   
@@ -674,7 +676,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("else\n");
     rdp_indent(); 
     text_printf("{\n"); 
-    rdp_indentation++; 
+    rdp_indentation_up(); 
     rdp_indent(); 
     text_printf("/* default action processing for %s*/\n", prod->id);
     if (rdp_dir_tree)
@@ -715,7 +717,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
       text_printf("\n");      /* terminate semantic actions tidily */
     }
     
-    rdp_indentation--; 
+    rdp_indentation_down(); 
     rdp_indent();
     text_printf("}\n");
   }
@@ -777,7 +779,7 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
     case K_CODE:
     if (!rdp_parser_only)     /* disabled by -p option */
     {
-      char * temp = prod->id; 
+      char * temp = prod->id;
       
       if (prod->code_pass != 0)
       {
@@ -799,7 +801,8 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
       {
         text_printf("\n");
         rdp_indent();
-        text_printf("}");
+        text_printf("}\n");
+        rdp_indent();
       }
       
       if (prod->code_terminator)
@@ -858,13 +861,12 @@ static void rdp_print_parser_alternate(rdp_data * production, rdp_data * primary
       text_printf(")\n");
       rdp_indent(); 
       text_printf("{\n"); 
-      rdp_indentation++; 
+      rdp_indentation_up(); 
       
       rdp_print_parser_sequence(list->production, primary); 
       
-      rdp_indentation--;
+      rdp_indentation_down();
       rdp_indent(); 
-      
       text_printf("}\n"); 
       
       if ((list = list->next)!= NULL)
@@ -878,11 +880,11 @@ static void rdp_print_parser_alternate(rdp_data * production, rdp_data * primary
       {
         rdp_indent();
         text_printf("else\n"); 
-        rdp_indentation++; 
+        rdp_indentation_up(); 
         rdp_indent(); 
         rdp_print_parser_test(production->id, & production->first, primary->id); 
         text_printf(";\n");
-        rdp_indentation--;
+        rdp_indentation_down();
       }
     }
   }
@@ -987,7 +989,7 @@ static void rdp_print_parser_primaries(void * base)
       rdp_error_production_name == 0 ? "": "\"",
       temp->id, temp->id);
       #endif
-      text_printf("   }\n"); 
+      text_printf("  }\n"); 
       /* In trace mode, add an exit message */
       if (rdp_trace)
         text_printf("  text_message(TEXT_INFO, \"Exited  \'%s\'\\n\");\n", temp->id); 
@@ -1207,7 +1209,8 @@ void rdp_print_parser(char * outputfilename, void * base)
         if (temp->params != NULL)
           rdp_print_parser_param_list(NULL, temp->params, 0, 0); 
         text_printf(" "); 
-        rdp_print_parser_alternate(temp, temp); 
+        rdp_print_parser_alternate(temp, temp);
+        text_printf("\n");
       }
       else
       {
