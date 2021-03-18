@@ -192,6 +192,7 @@ extern struct rdp_data_node * rdp_start_prod;
 extern char
 * rdp_dir_title,              /* string from TITLE directive */
 * rdp_dir_suffix,             /* string from SUFFIX directive */
+* rdp_rule_prefix,             /* string from RULE_PREFIX directive */
 * rdp_dir_pre_parse,          /* string from PRE_PARSE directive */
 * rdp_dir_post_parse,         /* string from POST_PARSE directive */
 * rdp_dir_global,             /* string from GLOBAL directive */

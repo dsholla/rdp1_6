@@ -120,6 +120,7 @@ dir ::= 'INCLUDE' '(' String: filename ')'
        'PRE_PARSE' '(' code:s [* rdp_dir_pre_parse = s; *] ')' |
        'GLOBAL' '(' code:s [* rdp_dir_global = s; *] ')' |
        'SUFFIX' '(' String:s [* rdp_dir_suffix = s; *] ')' |
+       'RULE_PREFIX' '(' String:s [* rdp_rule_prefix = s; *] ')' |
        'TITLE' '(' String: s [* rdp_dir_title = s; *] ')' |
 
        (* Numeric directives *)

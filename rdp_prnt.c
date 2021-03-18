@@ -52,11 +52,11 @@ static void rdp_print_parser_test(char * first_name, set_ * first, char * follow
   text_printf("scan_test");
 
   if (set_cardinality(first)> 1)
-    text_printf("_set(%s%s%s, &%s_first", 
+    text_printf("_set(%s%s%s, &%s%s_first", 
   rdp_error_production_name == 0 ? "": "\"", 
   rdp_error_production_name == 0 ? "NULL": first_name,
   rdp_error_production_name == 0 ? "": "\"",
-  first_name
+  rdp_rule_prefix, first_name
   );
   else
   {
@@ -70,7 +70,7 @@ static void rdp_print_parser_test(char * first_name, set_ * first, char * follow
   if (follow_name == NULL)
     text_printf(", NULL)");
   else
-    text_printf(", &%s_stop)", follow_name); 
+    text_printf(", &%s%s_stop)", rdp_rule_prefix, follow_name); 
 }
 
 static void rdp_print_parser_string(char * s)
@@ -765,7 +765,7 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
     rdp_error_production_name == 0 ? "": "\""); 
     
     rdp_print_parser_production_name(prod); 
-    text_printf(", &%s_stop);\n", primary->id); 
+    text_printf(", &%s%s_stop);\n", rdp_rule_prefix, primary->id); 
     rdp_indent(); 
     if (return_name != NULL && !rdp_parser_only) /* disable if -p option used */
     {
@@ -811,10 +811,10 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
     break; 
     case K_PRIMARY: 
     if (rdp_dir_tree && promote == PROMOTE_AND_COPY)
-      text_printf("if(rdp_tree_update) {rdp_tree->id = \"%s\"; rdp_tree->token = 0;}\n", prod->id); 
+      text_printf("if(rdp_tree_update) {rdp_tree->id = \"%s%s\"; rdp_tree->token = 0;}\n", rdp_rule_prefix, prod->id); 
     if (return_name != NULL && !rdp_parser_only) /* disable if -p option set! */
       text_printf("%s = ", return_name);
-    text_printf("%s", prod->id);
+    text_printf("%s%s", rdp_rule_prefix, prod->id);
     if (!(prod->code_only && actuals == NULL))
       rdp_print_parser_param_list(promote == PROMOTE_DONT ? prod->id: (char *) NULL, actuals, 0, 0); 
     text_printf(";\n"); 
@@ -945,7 +945,7 @@ static void rdp_print_parser_primaries(void * base)
       
       for (count = 0; count < temp->return_type_stars; count++)
         text_printf("*"); 
-      text_printf(" %s", temp->id);
+      text_printf(" %s%s", rdp_rule_prefix, temp->id);
 
       rdp_print_parser_param_list(NULL, temp->params, 1, 0); 
       
@@ -970,7 +970,7 @@ static void rdp_print_parser_primaries(void * base)
 
       /* In trace mode, add an entry message */
       if (rdp_trace)
-        text_printf("  text_message(TEXT_INFO, \"Entered \'%s\'\\n\");\n\n", temp->id);
+        text_printf("  text_message(TEXT_INFO, \"Entered \'%s%s\'\\n\");\n\n", rdp_rule_prefix, temp->id);
       #if 0
       text_printf("  if ("); 
       rdp_print_parser_test(temp->id, & temp->first, temp->contains_null ?(char *) NULL: temp->id);
@@ -983,16 +983,16 @@ static void rdp_print_parser_primaries(void * base)
       
       /* add error handling on exit */
       #if 1
-      text_printf("    scan_test_set(%s%s%s, &%s_stop, &%s_stop);\n", 
+      text_printf("    scan_test_set(%s%s%s, &%s%s_stop, &%s%s_stop);\n", 
       rdp_error_production_name == 0 ? "": "\"", 
       rdp_error_production_name == 0 ? "NULL": temp->id, 
       rdp_error_production_name == 0 ? "": "\"",
-      temp->id, temp->id);
+      rdp_rule_prefix, temp->id, rdp_rule_prefix, temp->id);
       #endif
       text_printf("  }\n"); 
       /* In trace mode, add an exit message */
       if (rdp_trace)
-        text_printf("  text_message(TEXT_INFO, \"Exited  \'%s\'\\n\");\n", temp->id); 
+        text_printf("  text_message(TEXT_INFO, \"Exited  \'%s%s\'\\n\");\n", rdp_rule_prefix, temp->id); 
       
       text_printf("%s}\n\n", is_void ? "": "  return result;\n"); 
     }
@@ -1162,10 +1162,10 @@ void rdp_print_parser(char * outputfilename, void * base)
     if (set_includes_element(& rdp_production_set, temp->kind)&& !temp->code_only)
     {
       if (temp->first_cardinality > 1)
-        text_printf("  set_ %s_first = SET_NULL;\n", temp->id); 
+        text_printf("  set_ %s%s_first = SET_NULL;\n", rdp_rule_prefix, temp->id); 
 
       if (temp->kind == K_PRIMARY)
-        text_printf("  set_ %s_stop = SET_NULL;\n", temp->id); 
+        text_printf("  set_ %s%s_stop = SET_NULL;\n", rdp_rule_prefix, temp->id); 
     }
     temp =(rdp_data *) symbol_next_symbol_in_scope(temp); 
   }
@@ -1178,14 +1178,14 @@ void rdp_print_parser(char * outputfilename, void * base)
     {
       if (temp->first_cardinality > 1)
       {
-        text_printf("  set_assign_list(&%s_first, ", temp->id); 
+        text_printf("  set_assign_list(&%s%s_first, ", rdp_rule_prefix, temp->id); 
         set_print_set_start_col(& temp->first, rdp_enum_string, 60, 30); 
         text_printf(", SET_END);\n"); 
       }
       
       if (temp->kind == K_PRIMARY)
       {
-        text_printf("  set_assign_list(&%s_stop, ", temp->id);
+        text_printf("  set_assign_list(&%s%s_stop, ", rdp_rule_prefix, temp->id);
         set_print_set_start_col(& temp->follow, rdp_enum_string, 60, 30); 
         text_printf(",SET_END);\n"); 
       }
@@ -1205,7 +1205,7 @@ void rdp_print_parser(char * outputfilename, void * base)
       
       if (temp->code_only)
       {
-        text_printf("#define %s", temp->id); 
+        text_printf("#define %s%s", rdp_rule_prefix, temp->id); 
         if (temp->params != NULL)
           rdp_print_parser_param_list(NULL, temp->params, 0, 0); 
         text_printf(" "); 
@@ -1221,7 +1221,7 @@ void rdp_print_parser(char * outputfilename, void * base)
 
         for (count = 0; count < temp->return_type_stars; count++)
           text_printf("*");
-        text_printf(" %s", temp->id);
+        text_printf(" %s%s", rdp_rule_prefix, temp->id);
 
         rdp_print_parser_param_list(NULL, temp->params, 1, 0);
 
@@ -1342,7 +1342,7 @@ void rdp_print_parser(char * outputfilename, void * base)
   "      text_get_char();\n"
   "      scan_();\n\n");
 
-  text_printf("      %s", rdp_start_prod->id);
+  text_printf("      %s%s", rdp_rule_prefix, rdp_start_prod->id);
 
   rdp_print_parser_param_list(rdp_start_prod->id, rdp_start_prod->params, 0, 1);
 

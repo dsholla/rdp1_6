@@ -48,6 +48,7 @@ rdp_data * rdp_start_prod;
 char
 * rdp_dir_title = "rdparser",  /* string from TITLE directive */
 * rdp_dir_suffix = "",        /* string from SUFFIX directive */
+* rdp_rule_prefix = "",        /* string from RULE_PREFIX directive */
 * rdp_dir_pre_parse = NULL,   /* string from PRE_PARSE directive */
 * rdp_dir_post_parse = NULL,  /* string from POST_PARSE directive */
 * rdp_dir_global = NULL,      /* string from GLOBAL directive */
