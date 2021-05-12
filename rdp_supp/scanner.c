@@ -19,7 +19,9 @@
 
 scan_comment_block *scan_comment_list = NULL;
 scan_comment_block *scan_comment_list_end = NULL;
+#if defined(SCAN_LIGHTWEIGHT_ECHO)
 static int seen_eoln = 0;
+#endif
 
 static int retain_comments = 0;
 

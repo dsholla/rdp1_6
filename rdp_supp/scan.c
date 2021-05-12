@@ -28,7 +28,7 @@ int scan_symbol_echo = 0;
 int scan_adsp_integers = 0;
 int scan_lexicalise_flag = 0;
 
-char * scan_token_names = NULL;
+const char * scan_token_names = NULL;
 
 void scan_allow_adsp_integers(int allow)
 {
@@ -40,7 +40,7 @@ void scan_lexicalise(void)
   scan_lexicalise_flag = 1;
 }
 
-void scan_init(const int case_insensitive, const int newline_visible, const int show_skips, const int symbol_echo, char * token_names)
+void scan_init(const int case_insensitive, const int newline_visible, const int show_skips, const int symbol_echo, const char * token_names)
 {
   scan_case_insensitive = case_insensitive;
   scan_show_skips = show_skips;

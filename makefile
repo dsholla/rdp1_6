@@ -4,7 +4,7 @@
 #
 ###############################################################################
 # Configuration for g++ on Unix
-CC      = g++
+CC      = gcc
 OBJ     = .o
 EXE     =
 DIFF    = diff -s
@@ -150,7 +150,7 @@ mvmasm$(EXE): mvmasm$(OBJ) mvm_aux$(OBJ) $(RDP_SUPP)
 
 # compile the mvmsim simulator
 mvmsim$(EXE): mvmsim$(OBJ) $(RDP_SUPP)
-	$(LINK)mvmsim$(EXE) mvmsim$(OBJ) $(RDP_SUPP)
+	$(LINK)mvmsim$(EXE) mvmsim$(OBJ) $(RDP_SUPP) $(MATHS)
 
 # test the single-pass compiler, assembler and simulator
 ml_test: miniloop$(EXE) mvmasm$(EXE) mvmsim$(EXE) testloop.m

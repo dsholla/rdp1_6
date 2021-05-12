@@ -17,7 +17,7 @@
 #include "ml_aux.h"
 #include "mt_aux.h"
 
-char * expression_walk(rdp_tree_node_data * root)
+static char * expression_walk(rdp_tree_node_data * root)
 {
   /* Postorder expression walk */
   if (root->token == SCAN_P_ID)
@@ -76,7 +76,7 @@ char * expression_walk(rdp_tree_node_data * root)
   }
 }
 
-void tree_walk(rdp_tree_node_data * root)
+static void tree_walk(rdp_tree_node_data * root)
 {
   /* Preorder tree walk */
   if (root == NULL)

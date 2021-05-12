@@ -28,7 +28,8 @@ static unsigned totalerrors = 0;  /* total number of errors this run */
 static unsigned totalwarnings = 0;  /* total number of warnings this run */
 static size_t maxtext = 20000;  /* size of text buffer */
 static unsigned tabwidth = 8;  /* tab expansion width: 2 is a good value for tgrind */
-static FILE * messages = stdout;  /* TEXT_MESSAGES; */
+static FILE * messages = NULL;  /* TEXT_MESSAGES; */
+#define MESSAGES_FILE (messages ? messages : stdout)
 
 static unsigned errors = 0;   /* total errors for this file */
 static FILE * file = NULL;    /* current file handle */
@@ -107,9 +108,9 @@ void text_dump(void)          /* debugging routine to dump text space */
 static void text_echo_line_number(void)
 {
   if (linenumber != 0)
-    fprintf(messages, "%6lu: ", linenumber);  /* Print present line number */
+    fprintf(MESSAGES_FILE, "%6lu: ", linenumber);  /* Print present line number */
   else
-    fprintf(messages, "******: "); 
+    fprintf(MESSAGES_FILE, "******: "); 
 }
 
 void text_echo_line(void)
@@ -120,7 +121,7 @@ void text_echo_line(void)
   
   /* current input line is stored in reverse order at top of text buffer: print backwards from last character of text buffer */
   for (temp = first_char - 1; temp > last_char; temp--)
-    fputc(* temp, messages);
+    fputc(* temp, MESSAGES_FILE);
   
   /* now print out the echo number line */
   if (echo_num >= 0)
@@ -134,10 +135,10 @@ void text_echo_line(void)
     while (++num_count <= echo_num)
     {
       while (char_count++ < echo_pos[num_count]- 1)
-        fputc('-', messages); 
-      fputc('1' + num_count, messages); 
+        fputc('-', MESSAGES_FILE); 
+      fputc('1' + num_count, MESSAGES_FILE); 
     }
-    fputc('\n', messages); 
+    fputc('\n', MESSAGES_FILE); 
   }
   
   echo_num = - 1;             /* reset echo numbering array pointer */
@@ -248,7 +249,7 @@ char * text_extract_filename(char * fname)
 }
 
 /* Table of string equivalents for ASCII codes */
-static char * text_ASCII_table =
+static char * text_ASCII_table[] = {
 "NUL" "SOH" "STX" "ETX" "EOT" "ENQ" "ACK" "BEL" "BS" "HT" "LF" "VT" "FF"
 "CR" "SO" "SI" "DLE" "DC1" "DC2" "DC3" "DC4" "NAK" "SYN" "ETB" "CAN"
 "EM" "SUB" "ESC" "FS" "GS" "RS" "US" "SPACE" "SHREIK" "DBLQUOTE" "HASH"
@@ -258,20 +259,14 @@ static char * text_ASCII_table =
 "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W"
 "X" "Y" "Z" "LBRACK" "BACKSLASH" "RBRACK" "UPARROW" "_" "`" "a" "b" "c"
 "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u"
-"v" "w" "x" "y" "z" "LBRACE" "BAR" "RBRACE" "TILDE" "DEL"; 
+"v" "w" "x" "y" "z" "LBRACE" "BAR" "RBRACE" "TILDE" "DEL" }; 
 
 char * text_find_ASCII_element(int c)
 {
-  char * temp = text_ASCII_table; 
-
   if (c > 127)
-    return"???"; 
+    return "???";
   else
-    while (c-- > 0)
-    while (* temp++ != 0)
-    ; 
-  
-  return temp;
+    return text_ASCII_table[c];
 }
 
 /* Release all memory held by the text package */
@@ -397,7 +392,7 @@ void text_init(const long max_text, const unsigned max_errors, const unsigned ma
     text_message(TEXT_WARNING, "-T%lu too large for architecture: recast to -T%u\n", max_text, maxtext); 
   maxerrors = max_errors;     /* set maximum number of errors per file */
   maxwarnings = max_warnings;  /* set maximum number of warnings per file */
-  
+
   text_bot =(char *) mem_malloc(maxtext);  /* allocate text buffer */
   
   text_top = text_bot;        /* top of text character */
@@ -561,22 +556,22 @@ int text_message(const enum text_message_type type, const char * fmt, ...)
 
   text_echo_line_number();
 
-  fprintf(messages, "%s",
+  fprintf(MESSAGES_FILE, "%s",
   type == TEXT_INFO || type == TEXT_INFO_ECHO ? "": 
   type == TEXT_WARNING || type == TEXT_WARNING_ECHO ?(warnings++, totalwarnings++, "Warning "): 
   type == TEXT_ERROR || type == TEXT_ERROR_ECHO ?(errors++, totalerrors++, "Error "): 
   type == TEXT_FATAL || type == TEXT_FATAL_ECHO ? "Fatal ": "Unknown "); 
   
   if (type == TEXT_WARNING_ECHO || type == TEXT_ERROR_ECHO)
-    fprintf(messages, "%.1i ", echo_num + 1);
+    fprintf(MESSAGES_FILE, "%.1i ", echo_num + 1);
   
   if (name != NULL && linenumber != 0)
-    fprintf(messages, "(%s) ", name); 
+    fprintf(MESSAGES_FILE, "(%s) ", name); 
   else if (type != TEXT_INFO && type != TEXT_INFO_ECHO)
-    fprintf(messages, "- "); 
+    fprintf(MESSAGES_FILE, "- "); 
   
   va_start(ap, fmt);          /* pass parameters to vprintf */
-  i = vfprintf(messages, fmt, ap);  /* remember count of characaters printed */
+  i = vfprintf(MESSAGES_FILE, fmt, ap);  /* remember count of characaters printed */
   va_end(ap);                 /* end of var args block */
   
   if (type == TEXT_FATAL || type == TEXT_FATAL_ECHO)
@@ -584,14 +579,14 @@ int text_message(const enum text_message_type type, const char * fmt, ...)
   
   if ((errors > maxerrors)&&(maxerrors > 0))
   {
-    fprintf(messages, "Fatal (%s): too many errors\n",
+    fprintf(MESSAGES_FILE, "Fatal (%s): too many errors\n",
     name == NULL ? "null file": name);
     exit(EXIT_FAILURE);
   }
 
   if ((warnings > maxwarnings)&&(maxwarnings > 0))
   {
-    fprintf(messages, "Fatal (%s): too many warnings\n",
+    fprintf(MESSAGES_FILE, "Fatal (%s): too many warnings\n",
     name == NULL ? "null file": name);
     exit(EXIT_FAILURE);
   }
@@ -655,10 +650,26 @@ int text_printf(const char * fmt, ...)
   va_list ap;                 /* argument list walker */
   
   va_start(ap, fmt);          /* pass parameters to vprintf */
-  i = vfprintf(messages, fmt, ap);  /* remember count of characaters printed */
+  i = vfprintf(MESSAGES_FILE, fmt, ap);  /* remember count of characaters printed */
   va_end(ap);                 /* end of var args block */
   
   return i;                   /* return number of characters printed */
+}
+
+int text_print_as_C_identifier(char * str)
+{
+  int i = 0;
+
+  if (str == NULL)
+  {
+    fprintf(MESSAGES_FILE, "(null)");
+    return 6;
+  }
+
+  while (* str != 0)
+    text_printf("%s", text_find_ASCII_element(* str++));
+
+  return i;
 }
 
 int text_print_as_C_string_or_char(FILE * file, char * string, int is_char_string)
@@ -709,7 +720,7 @@ int text_print_as_C_string_or_char(FILE * file, char * string, int is_char_strin
 
 int text_print_C_char(char * string)
 {
-  return text_print_as_C_string_or_char(messages, string, 1); 
+  return text_print_as_C_string_or_char(MESSAGES_FILE, string, 1); 
 }
 
 int text_print_C_char_file(FILE * file, char * string)
@@ -719,7 +730,7 @@ int text_print_C_char_file(FILE * file, char * string)
 
 int text_print_C_string(char * string)
 {
-  return text_print_as_C_string_or_char(messages, string, 0); 
+  return text_print_as_C_string_or_char(MESSAGES_FILE, string, 0); 
 }
 
 int text_print_C_string_file(FILE * file, char * string)

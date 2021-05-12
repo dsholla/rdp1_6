@@ -111,14 +111,16 @@ void pretty_print(char * lexeme, enum kinds kind, unsigned long column, unsigned
     
     for (indent_count = 0; indent_count < indentation; indent_count++)
       if (!((column == 1)&&(kind == K_COMMENT))) /* Don't indent comments that start in column 1 */
-      if (indent_size == 0)
-    {
-      fprintf(outputfile, "\t");  /* indent using a tab */
-      printed += text_get_tab_width(); 
-    }
-    else
-      for (space_count = 0; space_count < indent_size; space_count++)
-      printed += fprintf(outputfile, " "); 
+      {
+        if (indent_size == 0)
+        {
+          fprintf(outputfile, "\t");  /* indent using a tab */
+          printed += text_get_tab_width(); 
+        }
+        else
+          for (space_count = 0; space_count < indent_size; space_count++)
+              printed += fprintf(outputfile, " ");
+      }
     
     if (temporary_indent && kind != K_BLOCK_OPEN) /* reset temporary indent */
       indentation--; 

@@ -33,7 +33,7 @@ static int emitted = 0;       /* Count of bytes emitted this line */
 
 static int emitf(char * fmt, ...) /* conditional print to object file */
 {
-  int i; 
+  int i = 0; 
   va_list ap;                 /* argument list walker */
   
   va_start(ap, fmt); 

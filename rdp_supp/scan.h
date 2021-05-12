@@ -33,7 +33,7 @@ union{ \
 
 typedef long int integer;
 
-extern char * scan_token_names;
+extern const char * scan_token_names;
 extern void * scan_table;
 
 typedef struct
@@ -78,7 +78,7 @@ enum scan_primitive_type
 void scan_(void);
 void scan_allow_adsp_integers(int allow);
 unsigned long scan_column_number(void);
-void scan_init(const int case_insensitive, const int newline_visible, const int show_skips, const int symbol_echo, char * token_names);
+void scan_init(const int case_insensitive, const int newline_visible, const int show_skips, const int symbol_echo, const char * token_names);
 void scan_insert_comment_block(char *pattern, unsigned long column, unsigned long sequence_number);
 unsigned long scan_line_number(void);
 void scan_lexicalise(void);

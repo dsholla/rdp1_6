@@ -245,6 +245,9 @@ void set_difference_set(const set_ * dst, const set_ * src)
 /* free storage associated with a set's elements and return set to SET_NULL */
 void set_free(set_ * dst)
 {
+  if (dst == NULL)
+    return;
+    
   if (dst->elements != NULL)
     mem_free(dst->elements); 
   dst->length = 0; 
@@ -395,7 +398,11 @@ void set_normalise(set_ * dst)
 
 unsigned set_normalised_length(const set_ * dst)
 {
-   unsigned normalized_size = dst->length - 1;
+   unsigned normalized_size;
+   if (dst->length == 0)
+     return 0;
+     
+   normalized_size = dst->length - 1;
 
    while (dst->elements[normalized_size] == 0 && normalized_size > 0)
      normalized_size--;
@@ -424,10 +431,17 @@ void set_print_element(const unsigned element, const char * element_names)
   }
 }
 
-void set_print_set(const set_ * src, const char * element_names, unsigned line_length)
+void set_print_set_start_col(const set_ * src, const char * element_names,
+        unsigned line_length, int start_col)
 {
+  if (src == NULL)
+  {
+    text_printf("!NULL!");
+    return;
+  }
+
   unsigned
-  column = 0,
+  column = start_col,
   last_printed = 0,
   not_first = 0,
   * elements = set_array(src),
@@ -443,8 +457,8 @@ void set_print_set(const set_ * src, const char * element_names, unsigned line_l
 
     if (line_length != 0 && column >= line_length) /* we are past margin */
     {
-      text_printf("\n");
-      column = 0;
+      text_printf("\n    ");
+      column = 4; /* indent the start of new line */
     }
 
     if (element_names == NULL) /* just print decimal set element numbers */
@@ -463,6 +477,10 @@ void set_print_set(const set_ * src, const char * element_names, unsigned line_l
     }
   }
   mem_free(base);             /* release memory block */
+}
+void set_print_set(const set_ * src, const char * element_names, unsigned line_length)
+{
+    set_print_set_start_col(src, element_names, line_length, 0);
 }
 
 void set_print_set_array(const unsigned * elements, const char * element_names, unsigned line_length)

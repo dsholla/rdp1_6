@@ -26,6 +26,8 @@ char * rdp_token_string = NULL;
 char * rdp_enum_string = NULL;
 
 static unsigned rdp_indentation = 0;  /* current identation level */
+#define rdp_indentation_up() ++rdp_indentation
+#define rdp_indentation_down() if(rdp_indentation > 0) --rdp_indentation
 
 static void rdp_print_parser_include_line(rdp_string_list * p)
 {
@@ -50,11 +52,11 @@ static void rdp_print_parser_test(char * first_name, set_ * first, char * follow
   text_printf("scan_test");
 
   if (set_cardinality(first)> 1)
-    text_printf("_set(%s%s%s, &%s_first", 
+    text_printf("_set(%s%s%s, &%s%s_first", 
   rdp_error_production_name == 0 ? "": "\"", 
   rdp_error_production_name == 0 ? "NULL": first_name,
   rdp_error_production_name == 0 ? "": "\"",
-  first_name
+  rdp_rule_prefix, first_name
   );
   else
   {
@@ -68,7 +70,7 @@ static void rdp_print_parser_test(char * first_name, set_ * first, char * follow
   if (follow_name == NULL)
     text_printf(", NULL)");
   else
-    text_printf(", &%s_stop)", follow_name); 
+    text_printf(", &%s%s_stop)", rdp_rule_prefix, follow_name); 
 }
 
 static void rdp_print_parser_string(char * s)
@@ -437,6 +439,7 @@ static void rdp_print_sub_alternate(rdp_data * production, int expand)
 void rdp_print_header(char * headerfilename)
 {
   FILE * headerfile;
+  int toke_len_sum;
 
   rdp_table_list * temp_table = rdp_dir_symbol_table;
   rdp_data * temp =(rdp_data *) symbol_next_symbol_in_scope(symbol_get_scope(tokens));
@@ -486,14 +489,19 @@ void rdp_print_header(char * headerfilename)
   text_printf(" and compiled on \" __DATE__ \" at \" __TIME__ \n");
 
   /* print token enumeration */
-  text_printf("\n/* Token enumeration */\nenum\n{\nRDP_TT_BOTTOM = SCAN_P_TOP"); 
+  text_printf("\n/* Token enumeration */\nenum\n{\n  RDP_TT_BOTTOM = SCAN_P_TOP");
+  toke_len_sum = 20;
   while (temp != NULL)
   {
     if (temp->kind == K_TOKEN || temp->kind == K_EXTENDED)
     {
-      text_printf(","); 
-      if (count++ % 8 == 0)
-        text_printf("\n");
+      text_printf(",");
+      toke_len_sum += strlen(temp->token_enum)+2;
+      if (toke_len_sum > 50)
+      {
+        text_printf("\n  ");
+        toke_len_sum = 0;
+      }
       rdp_print_parser_production_name(temp); 
       if (first)
       {
@@ -503,7 +511,7 @@ void rdp_print_header(char * headerfilename)
     }
     temp =(rdp_data *) symbol_next_symbol_in_scope(temp);
   }
-  text_printf(",\nRDP_TT_TOP\n};\n\n");
+  text_printf(",\n  RDP_TT_TOP\n};\n\n");
 
   /* print declaration for tree datatype */
   text_printf("/* Tree data types */\n\n"
@@ -563,7 +571,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("/* WARNING - an LL(1) violation was detected at this point in the grammar */\n");
   }
 
-  rdp_indentation++;
+  rdp_indentation_up();
   
   /* We don't need to instantiate count if hi is infinity and lo is 0 or 1 */
   if (!((prod->hi == 0 || prod->hi == 1)&&(prod->lo == 1 || prod->lo == 0)))
@@ -577,7 +585,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
 
   rdp_indent();
   text_printf("{\n"); 
-  rdp_indentation++; 
+  rdp_indentation_up(); 
   
   /* Put in test that first element of body matches if iterator low count > 0 and prod isn't nullable */
   if (prod->lo != 0 && !prod->contains_null)
@@ -589,13 +597,13 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
   
   rdp_indent(); 
   text_printf("{\n");
-  rdp_indentation++;
+  rdp_indentation_up();
 
   rdp_print_parser_alternate(prod, primary);
   
+  rdp_indentation_down();
   rdp_indent(); 
   text_printf("}\n");
-  rdp_indentation--;
   
   if (!((prod->hi == 0 || prod->hi == 1)&&(prod->lo == 1 || prod->lo == 0)))
   {
@@ -647,7 +655,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("break;   /* hi limit is 1! */\n"); 
   }
 
-  rdp_indentation--;
+  rdp_indentation_down();
   rdp_indent(); 
   text_printf("}\n");
   
@@ -658,7 +666,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("  text_message(TEXT_ERROR_ECHO, \"iteration count too low\\n\");\n"); 
   }
   
-  rdp_indentation--; 
+  rdp_indentation_down(); 
   rdp_indent();
   text_printf("} /* end of %s */\n", prod->id);
   
@@ -668,7 +676,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
     text_printf("else\n");
     rdp_indent(); 
     text_printf("{\n"); 
-    rdp_indentation++; 
+    rdp_indentation_up(); 
     rdp_indent(); 
     text_printf("/* default action processing for %s*/\n", prod->id);
     if (rdp_dir_tree)
@@ -709,7 +717,7 @@ static void rdp_print_parser_subproduction(rdp_data * prod, rdp_data * primary, 
       text_printf("\n");      /* terminate semantic actions tidily */
     }
     
-    rdp_indentation--; 
+    rdp_indentation_down(); 
     rdp_indent();
     text_printf("}\n");
   }
@@ -757,7 +765,7 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
     rdp_error_production_name == 0 ? "": "\""); 
     
     rdp_print_parser_production_name(prod); 
-    text_printf(", &%s_stop);\n", primary->id); 
+    text_printf(", &%s%s_stop);\n", rdp_rule_prefix, primary->id); 
     rdp_indent(); 
     if (return_name != NULL && !rdp_parser_only) /* disable if -p option used */
     {
@@ -771,15 +779,18 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
     case K_CODE:
     if (!rdp_parser_only)     /* disabled by -p option */
     {
-      char * temp = prod->id; 
+      char * temp = prod->id;
       
       if (prod->code_pass != 0)
-        text_printf("if (rdp_pass == %u) { \\\n", prod->code_pass);
+      {
+        text_printf("if (rdp_pass == %u) {\n", prod->code_pass);
+        rdp_indent();
+      }
 
       while (* temp != '\0')
       {
         if (* temp == '\n')
-          text_printf("\\\n"); 
+          text_printf(prod->first_done ? "\\\n" : "\n");
         else
           if (isprint(*temp))
             text_printf("%c", * temp);
@@ -787,18 +798,23 @@ static void rdp_print_parser_item(rdp_data * prod, rdp_data * primary, char * re
       }
       
       if (prod->code_pass != 0)
-        text_printf(" \\\n}"); 
+      {
+        text_printf("\n");
+        rdp_indent();
+        text_printf("}\n");
+        rdp_indent();
+      }
       
-      if (prod->kind == K_CODE && prod->code_terminator)
+      if (prod->code_terminator)
         text_printf("\n");    /* terminate semantic actions tidily */
     }
     break; 
     case K_PRIMARY: 
     if (rdp_dir_tree && promote == PROMOTE_AND_COPY)
-      text_printf("if(rdp_tree_update) {rdp_tree->id = \"%s\"; rdp_tree->token = 0;}\n", prod->id); 
+      text_printf("if(rdp_tree_update) {rdp_tree->id = \"%s%s\"; rdp_tree->token = 0;}\n", rdp_rule_prefix, prod->id); 
     if (return_name != NULL && !rdp_parser_only) /* disable if -p option set! */
       text_printf("%s = ", return_name);
-    text_printf("%s", prod->id);
+    text_printf("%s%s", rdp_rule_prefix, prod->id);
     if (!(prod->code_only && actuals == NULL))
       rdp_print_parser_param_list(promote == PROMOTE_DONT ? prod->id: (char *) NULL, actuals, 0, 0); 
     text_printf(";\n"); 
@@ -845,13 +861,12 @@ static void rdp_print_parser_alternate(rdp_data * production, rdp_data * primary
       text_printf(")\n");
       rdp_indent(); 
       text_printf("{\n"); 
-      rdp_indentation++; 
+      rdp_indentation_up(); 
       
       rdp_print_parser_sequence(list->production, primary); 
       
-      rdp_indentation--;
+      rdp_indentation_down();
       rdp_indent(); 
-      
       text_printf("}\n"); 
       
       if ((list = list->next)!= NULL)
@@ -865,12 +880,11 @@ static void rdp_print_parser_alternate(rdp_data * production, rdp_data * primary
       {
         rdp_indent();
         text_printf("else\n"); 
-        rdp_indentation++; 
+        rdp_indentation_up(); 
         rdp_indent(); 
         rdp_print_parser_test(production->id, & production->first, primary->id); 
-        rdp_indentation--; 
-        rdp_indent();
-        text_printf(";\n"); 
+        text_printf(";\n");
+        rdp_indentation_down();
       }
     }
   }
@@ -902,7 +916,7 @@ static void rdp_print_locals(void * base)
       text_printf("  %s", list->production->return_type); 
       for (temp_int = 0; temp_int < list->production->return_type_stars; temp_int++)
         text_printf("*");
-      text_printf(" %s;\n", list->return_name); 
+      text_printf(" %s = 0;\n", list->return_name); 
     }
     
     list = list->next; 
@@ -931,7 +945,7 @@ static void rdp_print_parser_primaries(void * base)
       
       for (count = 0; count < temp->return_type_stars; count++)
         text_printf("*"); 
-      text_printf(" %s", temp->id);
+      text_printf(" %s%s", rdp_rule_prefix, temp->id);
 
       rdp_print_parser_param_list(NULL, temp->params, 1, 0); 
       
@@ -946,7 +960,7 @@ static void rdp_print_parser_primaries(void * base)
         text_printf("  %s", temp->return_type);
         for (temp_int = 0; temp_int < temp->return_type_stars; temp_int++)
           text_printf("*");
-        text_printf(" result;\n");
+        text_printf(" result = 0;\n");
       }
       
       if (!rdp_parser_only)   /* disabled by -p option */
@@ -956,7 +970,7 @@ static void rdp_print_parser_primaries(void * base)
 
       /* In trace mode, add an entry message */
       if (rdp_trace)
-        text_printf("  text_message(TEXT_INFO, \"Entered \'%s\'\\n\");\n\n", temp->id);
+        text_printf("  text_message(TEXT_INFO, \"Entered \'%s%s\'\\n\");\n\n", rdp_rule_prefix, temp->id);
       #if 0
       text_printf("  if ("); 
       rdp_print_parser_test(temp->id, & temp->first, temp->contains_null ?(char *) NULL: temp->id);
@@ -969,16 +983,16 @@ static void rdp_print_parser_primaries(void * base)
       
       /* add error handling on exit */
       #if 1
-      text_printf("    scan_test_set(%s%s%s, &%s_stop, &%s_stop);\n", 
+      text_printf("    scan_test_set(%s%s%s, &%s%s_stop, &%s%s_stop);\n", 
       rdp_error_production_name == 0 ? "": "\"", 
       rdp_error_production_name == 0 ? "NULL": temp->id, 
       rdp_error_production_name == 0 ? "": "\"",
-      temp->id, temp->id);
+      rdp_rule_prefix, temp->id, rdp_rule_prefix, temp->id);
       #endif
-      text_printf("   }\n"); 
+      text_printf("  }\n"); 
       /* In trace mode, add an exit message */
       if (rdp_trace)
-        text_printf("  text_message(TEXT_INFO, \"Exited  \'%s\'\\n\");\n", temp->id); 
+        text_printf("  text_message(TEXT_INFO, \"Exited  \'%s%s\'\\n\");\n", rdp_rule_prefix, temp->id); 
       
       text_printf("%s}\n\n", is_void ? "": "  return result;\n"); 
     }
@@ -991,7 +1005,7 @@ void rdp_print_parser(char * outputfilename, void * base)
   rdp_data * temp; 
   rdp_table_list * temp_table; 
   FILE * parserfile;
-  unsigned token_count;
+  unsigned token_count, token_len_sum;
   char * str; 
 
   if (rdp_verbose)
@@ -1033,14 +1047,19 @@ void rdp_print_parser(char * outputfilename, void * base)
   "  rdp_sourcefilenumber,                /* Source file counter */\n"
   "  rdp_pass;                            /* pass number */\n\n"
   "int rdp_error_return = 0;              /* return value for main routine */\n\n"
-  "char *rdp_tokens = ", rdp_dir_output_file);
+  "const char *rdp_tokens = ", rdp_dir_output_file);
 
-  str = rdp_token_string; 
+  str = rdp_token_string;
+  token_len_sum = 0;
   for (token_count = 0; token_count < rdp_token_count; token_count++)
   {
+    token_len_sum += strlen(str) + 5;
     text_printf("\"%s\\0\" ", str); 
-    if (token_count % 8 == 0)
-      text_printf("\n"); 
+    if (token_count == 0 || token_len_sum > 60)
+    {
+      text_printf("\n  ");
+      token_len_sum = 0;
+    }
     while (* str++ != 0)
       ;
   }
@@ -1060,7 +1079,7 @@ void rdp_print_parser(char * outputfilename, void * base)
     text_printf("\n/* Tree update function for noterminal nodes */\n"
                 "static int rdp_tree_update = 0;\n\n"
                 "rdp_tree_node_data* rdp_tree_last_child;\n\n"
-                "rdp_tree_node_data* rdp_add_node(char* id, rdp_tree_node_data* rdp_tree)\n"
+                "static rdp_tree_node_data* rdp_add_node(char* id, rdp_tree_node_data* rdp_tree)\n"
                 "{\n"
                 "  if (rdp_tree_update)\n"
                 "  {\n"
@@ -1069,12 +1088,12 @@ void rdp_print_parser(char * outputfilename, void * base)
                 "       node->id = id;\n"
                 "     else\n"
                 "       memcpy(node, text_scan_data, sizeof(scan_data));\n"
-                "       return node;\n"
+                "     return node;\n"
                 "  }\n"
                 "  else\n"
                 "    return NULL;\n"
                 "}\n\n"
-                "rdp_tree_node_data* rdp_add_child(char* id, rdp_tree_node_data* rdp_tree)\n"
+                "static rdp_tree_node_data* rdp_add_child(char* id, rdp_tree_node_data* rdp_tree)\n"
                 "{\n"
                 "  if (rdp_tree_update)\n"
                 "  {\n"
@@ -1090,7 +1109,7 @@ void rdp_print_parser(char * outputfilename, void * base)
                 "    return NULL;\n"
                 "}\n\n"
 
-                "rdp_tree_node_data* rdp_add_parent(char* id, rdp_tree_node_data* rdp_tree)\n"
+                "static rdp_tree_node_data* rdp_add_parent(char* id, rdp_tree_node_data* rdp_tree)\n"
                 "{\n"
                 "  if (rdp_tree_update)\n"
                 "  {\n"
@@ -1143,10 +1162,10 @@ void rdp_print_parser(char * outputfilename, void * base)
     if (set_includes_element(& rdp_production_set, temp->kind)&& !temp->code_only)
     {
       if (temp->first_cardinality > 1)
-        text_printf("  set_ %s_first = SET_NULL;\n", temp->id); 
+        text_printf("  set_ %s%s_first = SET_NULL;\n", rdp_rule_prefix, temp->id); 
 
       if (temp->kind == K_PRIMARY)
-        text_printf("  set_ %s_stop = SET_NULL;\n", temp->id); 
+        text_printf("  set_ %s%s_stop = SET_NULL;\n", rdp_rule_prefix, temp->id); 
     }
     temp =(rdp_data *) symbol_next_symbol_in_scope(temp); 
   }
@@ -1159,15 +1178,15 @@ void rdp_print_parser(char * outputfilename, void * base)
     {
       if (temp->first_cardinality > 1)
       {
-        text_printf("  set_assign_list(&%s_first, ", temp->id); 
-        set_print_set(& temp->first, rdp_enum_string, 78); 
+        text_printf("  set_assign_list(&%s%s_first, ", rdp_rule_prefix, temp->id); 
+        set_print_set_start_col(& temp->first, rdp_enum_string, 60, 30); 
         text_printf(", SET_END);\n"); 
       }
       
       if (temp->kind == K_PRIMARY)
       {
-        text_printf("  set_assign_list(&%s_stop, ", temp->id);
-        set_print_set(& temp->follow, rdp_enum_string, 78); 
+        text_printf("  set_assign_list(&%s%s_stop, ", rdp_rule_prefix, temp->id);
+        set_print_set_start_col(& temp->follow, rdp_enum_string, 60, 30); 
         text_printf(",SET_END);\n"); 
       }
     }
@@ -1186,11 +1205,12 @@ void rdp_print_parser(char * outputfilename, void * base)
       
       if (temp->code_only)
       {
-        text_printf("#define %s", temp->id); 
+        text_printf("#define %s%s", rdp_rule_prefix, temp->id); 
         if (temp->params != NULL)
           rdp_print_parser_param_list(NULL, temp->params, 0, 0); 
         text_printf(" "); 
-        rdp_print_parser_alternate(temp, temp); 
+        rdp_print_parser_alternate(temp, temp);
+        text_printf("\n");
       }
       else
       {
@@ -1201,7 +1221,7 @@ void rdp_print_parser(char * outputfilename, void * base)
 
         for (count = 0; count < temp->return_type_stars; count++)
           text_printf("*");
-        text_printf(" %s", temp->id);
+        text_printf(" %s%s", rdp_rule_prefix, temp->id);
 
         rdp_print_parser_param_list(NULL, temp->params, 1, 0);
 
@@ -1232,7 +1252,8 @@ void rdp_print_parser(char * outputfilename, void * base)
   "  unsigned long rdp_tabwidth = %lul;   /* tab expansion width */\n\n",
   rdp_dir_text_size, rdp_dir_tab_width);
 
-  text_printf("  char* rdp_vcg_filename = NULL;      /* filename for -V option */\n\n");
+  if (rdp_dir_tree)
+    text_printf("  char* rdp_vcg_filename = NULL;      /* filename for -V option */\n\n");
 
   if (rdp_dir_tree)
     text_printf("  rdp_tree_node_data* rdp_tree = (rdp_tree_node_data*) graph_insert_graph(\"RDP derivation tree\");  /* hook for derivation tree */\n"
@@ -1321,14 +1342,14 @@ void rdp_print_parser(char * outputfilename, void * base)
   "      text_get_char();\n"
   "      scan_();\n\n");
 
-  text_printf("      %s", rdp_start_prod->id);
+  text_printf("      %s%s", rdp_rule_prefix, rdp_start_prod->id);
 
   rdp_print_parser_param_list(rdp_start_prod->id, rdp_start_prod->params, 0, 1);
 
   text_printf(
   ";            /* call parser at top level */\n"
   "      if (text_total_errors() != 0)\n"
-  "        text_message(TEXT_FATAL, \"error%%s detected in source file '%s'\\n\", text_total_errors() == 1 ? \"\" : \"s\", rdp_sourcefilename);   /* crash quietly */ \n");
+  "        text_message(TEXT_FATAL, \"error%%s detected in source file '%%s'\\n\", text_total_errors() == 1 ? \"\" : \"s\", rdp_sourcefilename);   /* crash quietly */ \n");
 
   if (rdp_dir_tree && !rdp_dir_epsilon_tree)
     text_printf("      graph_epsilon_prune_rdp_tree(rdp_tree_root, sizeof(rdp_tree_edge_data));\n");

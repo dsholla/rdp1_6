@@ -62,6 +62,7 @@ void set_normalise(set_ * dst);
 unsigned set_normalised_length(const set_ * dst);
 
 void set_print_element(const unsigned element, const char * element_names);
+void set_print_set_start_col(const set_ * src, const char * element_names, unsigned line_length, int start_col);
 void set_print_set(const set_ * src, const char * element_names, unsigned line_length);
 void set_print_set_array(const unsigned * elements, const char * element_names, unsigned line_length);
 void set_print_set_callback(const set_ * src, int (*callback) (const unsigned symbol_number), unsigned line_length);
